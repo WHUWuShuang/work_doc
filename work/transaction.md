@@ -8,7 +8,7 @@
 *	按规定制作交易界面  
 
 >>###交易流程判定#  
-*  服务端增加交易判定，具体判定流程和规程参照策划文档  
+*  服务端增加交易判定，具体判定流程和规程参照[策划文档](https://github.com/WHUWuShuang/work_doc/blob/master/design/transaction.md)  
 
 >>###交易操作添加  
 1. 物品能够放入交易框  
