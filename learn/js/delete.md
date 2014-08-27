@@ -2,22 +2,22 @@
 
        
 ###**目录**  
-*  [原理](.#原理)   
-1.	[代码类型](.#代码类型)    
-1.	[执行上下文](.#执行上下文)
-1.	[激活对象/可变对象](.#激活对象/可变对象)
-1.	[属性特性](.#属性特性)
-1.	[内置对象和DontDelete](.#内置对象和DontDelete)
-1.	[未声明的赋值](.#未声明的赋值)
-1.	[Firebug 困惑](.#Firebug&amp;困惑)
-1.	[通过eval删除变量](.#通过eval删除变量)
-1.	[浏览器兼容性](.#浏览器兼容性)
-1.	[Gecko DontDelete bug](.#Gecko&amp;DontDelete&amp;bug)
-1.	[IE bugs](.#IE&amp;bugs)
-*  [误区](.#误区)
-1.	['delete’和宿主对象](.#'delete’和宿主对象)
-1.	[ES5严格模式](.#ES5严格模式)
-*  [总结](.#总结)
+*  [原理](./delete.md#原理)   
+1.	[代码类型](./delete.md#代码类型)    
+1.	[执行上下文](./delete.md#执行上下文)
+1.	[激活对象/可变对象](./delete.md#激活对象/可变对象)
+1.	[属性特性](./delete.md#属性特性)
+1.	[内置对象和DontDelete](./delete.md#内置对象和DontDelete)
+1.	[未声明的赋值](./delete.md#未声明的赋值)
+1.	[Firebug 困惑](./delete.md#Firebug&amp;困惑)
+1.	[通过eval删除变量](./delete.md#通过eval删除变量)
+1.	[浏览器兼容性](./delete.md#浏览器兼容性)
+1.	[Gecko DontDelete bug](./delete.md#Gecko&amp;DontDelete&amp;bug)
+1.	[IE bugs](./delete.md#IE&amp;bugs)
+*  [误区](./delete.md#误区)
+1.	['delete’和宿主对象](./delete.md#'delete’和宿主对象)
+1.	[ES5严格模式](./delete.md#ES5严格模式)
+*  [总结](./delete.md#总结)
 
 ###**原理**
 
