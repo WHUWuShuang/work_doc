@@ -39,98 +39,95 @@ typeof x; // "function" `
 
 >####**代码类型**  
 
->>在ECMAScript中有三种类型的可执行代码：全局代码（Global code）、函数代码（Function code）和Eval code。这些类型有那么点自我描述，但这里还是作一个简短的概述：
+>>在ECMAScript中有三种类型的可执行代码：全局代码*（Global code）*、函数代码*（Function code）*和Eval code。这些类型有那么点自我描述，但这里还是作一个简短的概述：
 
->>当一段源代码正文被视为程序时，它在全局作用域中执行，被当成全局代码（Global code）。在一个浏览器环境中，SCRIPT元素中的内容通常被当作程序来解析，因此，它被当作全局代码来评估。 
-在一个函数内部直接执行的任何代码，很明显被当作函数代码（Function code）。在浏览器红中事件属性的内容（如：<p onclick="...">）通常被当作函数代码（Function code）来解析； 
+>>当一段源代码正文被视为程序时，它在全局作用域中执行，被当成全局代码*（Global code）*。在一个浏览器环境中，SCRIPT元素中的内容通常被当作程序来解析，因此，它被当作全局代码来评估。   
+在一个函数内部直接执行的任何代码，很明显被当作函数代码*（Function code）*。在浏览器红中事件属性的内容（如：`<p onclick="...">`）通常被当作函数代码*（Function code）*来解析。  
 最后，提供给内置函数eval()的文本被当作Eval 代码（Eval code）来解析。我们很快会看到这种类型很特殊。
  
 >####**执行上下文**
 
->>当ECMAScript 代码执行时，它总是在一定的上下文中运行，执行上下文是一个有点抽象的实体，它有助于我们理解作用域和变量实例化如何工作的。对于三种类型的可执行代码，每个都有执行的上下文。当一个函数执行时，可以说控制进入到函数代码（Function code）的执行上下文。全局代码执行时，进入到全局代码（Global code）的执行上下文。
+>>当ECMAScript代码执行时，它总是在一定的上下文中运行，执行上下文是一个有点抽象的实体，它有助于我们理解作用域和变量实例化如何工作的。对于三种类型的可执行代码，每个都有执行的上下文。当一个函数执行时，可以说控制进入到函数代码*（Function code）*的执行上下文。全局代码执行时，进入到全局代码*（Global code）*的执行上下文。
 
 >>正如你所见，执行上下文逻辑上来自一个栈。首先可能是有自己作用域的全局代码，代码中可能调用一个函数，它有自己的作用域，函数可以调用另外一个函数，等等。即使函数递归地调用它自身，每一次调用都进入一个新的执行上下文。
 
-激活对象/可变对象
+>####**激活对象/可变对象**  
 
-每一个执行上下文在其内部都有一个所谓的可变对象。与执行上下文类似，可变对象是一个抽象的实体，一个描述变量示例化的机制。现在，最有趣的是在源代码中声明的变量和函数被当作这个可变对象的属性被添加。
+>>每一个执行上下文在其内部都有一个所谓的可变对象。与执行上下文类似，可变对象是一个抽象的实体，一个描述变量示例化的机制。现在，最有趣的是在源代码中声明的变量和函数被当作这个可变对象的属性被添加。
 
-当控制进入全局代码的执行上下文时，一个全局对象用作可变对象。这也正是为什么在全局范围中声明的变量或者函数变成了全局对象的属性。
+>>当控制进入全局代码的执行上下文时，一个全局对象用作可变对象。这也正是为什么在全局范围中声明的变量或者函数变成了全局对象的属性。
 
-代码 
-1 /* remember that `this` refers to global object when in global scope */
-2   var GLOBAL_OBJECT = this; 
-3   var foo = 1; 
-4   GLOBAL_OBJECT.foo; // 1 
-5   foo === GLOBAL_OBJECT.foo; // true   
-6   function bar(){} 
-7   typeof GLOBAL_OBJECT.bar; // "function" 
-8   GLOBAL_OBJECT.bar === bar; // true
-Ok，全局变量变成了全局对象的属性，但是，那些在函数代码（Function code）中定义的局部变量又会如何呢？行为其实很相似：它成了可变对象的属性。唯一的差别在于在函数代码（Function code）中，可变对象不是全局对象，而是所谓的激活对象。每次函数代码（Function code）进入执行作用域时，激活对象即被创建。
+>>`/* remember that 'this' refers to global object when in global scope */
+var GLOBAL_OBJECT = this;
+var foo = 1;
+GLOBAL_OBJECT.foo; // 1
+foo === GLOBAL_OBJECT.foo; // true
+function bar(){}
+typeof GLOBAL_OBJECT.bar; // "function"
+GLOBAL_OBJECT.bar === bar; // true`
+Ok，全局变量变成了全局对象的属性，但是，那些在函数代码*（Function code）*中定义的局部变量又会如何呢？行为其实很相似：它成了可变对象的属性。唯一的差别在于在函数代码*（Function code）*中，可变对象不是全局对象，而是所谓的激活对象。每次函数代码*（Function code）*进入执行作用域时，激活对象即被创建。
 
-不仅函数代码（Function code）中的变量和函数成为激活对象的属性，而且函数的每一个参数（与形参相对应的名称）和一个特定Arguments 对象（Arguments ）也是。注意，激活对象是一种内部机制，不会被程序代码真正访问到。
+>>不仅函数代码*（Function code）*中的变量和函数成为激活对象的属性，而且函数的每一个参数（与形参相对应的名称）和一个特定Arguments 对象*（Arguments ）*也是。注意，激活对象是一种内部机制，不会被程序代码真正访问到。
 
-代码 
- 1 (function(foo){ 
- 2   var bar = 2; 
- 3   function baz(){} 
- 4   /* 
- 5   In abstract terms, 
- 6   Special `arguments` object becomes a property of containing function's Activation object: 
- 7     ACTIVATION_OBJECT.arguments; // Arguments object 
- 8   ...as well as argument `foo`: 
- 9     ACTIVATION_OBJECT.foo; // 1 
-10   ...as well as variable `bar`: 
-11     ACTIVATION_OBJECT.bar; // 2 
-12   ...as well as function declared locally: 
-13     typeof ACTIVATION_OBJECT.baz; // "function" 
-14   */
-15 })(1);
-最后，在Eval 代码（Eval code）中声明的变量作为正在调用的上下文的可变对象的属性被创建。Eval 代码（Eval code）只使用它正在被调用的哪个执行上下文的可变对象。
+>>`(function(foo){
+  var bar = 2;
+  function baz(){}
+  /*
+  In abstract terms,
+  Special 'arguments' object becomes a property of containing function's Activation object: 
+    ACTIVATION_OBJECT.arguments; // Arguments object
+  ...as well as argument 'foo':
+    ACTIVATION_OBJECT.foo; // 1
+  ...as well as variable 'bar':
+    ACTIVATION_OBJECT.bar; // 2
+  ...as well as function declared locally:
+    typeof ACTIVATION_OBJECT.baz; // "function"
+  */
+})(1);`
+最后，在Eval 代码*（Eval code）*中声明的变量作为正在调用的上下文的可变对象的属性被创建。Eval 代码*（Eval code）*只使用它正在被调用的哪个执行上下文的可变对象。
 
-代码 
- 1 var GLOBAL_OBJECT = this; 
- 2 /* `foo` is created as a property of calling context Variable object, 
- 3     which in this case is a Global object */
- 4 eval('var foo = 1;'); 
- 5 GLOBAL_OBJECT.foo; // 1 
- 6 (function(){ 
- 7   /* `bar` is created as a property of calling context Variable object, 
- 8     which in this case is an Activation object of containing function */
- 9   eval('var bar = 1;'); 
-10   /* 
-11     In abstract terms, 
-12     ACTIVATION_OBJECT.bar; // 1 
-13   */
-14 })();
+>>`var GLOBAL_OBJECT = this; 
+/* 'foo; is created as a property of calling context Variable object, 
+    which in this case is a Global object */
+eval('var foo = 1;'); 
+GLOBAL_OBJECT.foo; // 1 
+(function(){ 
+  /* 'bar' is created as a property of calling context Variable object, 
+    which in this case is an Activation object of containing function */
+  eval('var bar = 1;'); 
+  /* 
+    In abstract terms, 
+    ACTIVATION_OBJECT.bar; // 1 
+  */
+})();`
 
-属性特性
+>####**属性特性**
 
-现在变量会怎样已经很清楚（它们成为属性），剩下唯一的需要理解的概念是属性特性。每个属性都有来自下列一组属性中的零个或多个特性－－ReadOnly, DontEnum, DontDelete 和Internal，你可以认为它们是一个标记，一个属性可有可无的特性。为了今天讨论的目的，我们只关心DontDelete 特性。
+>>现在变量会怎样已经很清楚（它们成为属性），剩下唯一的需要理解的概念是属性特性。每个属性都有来自下列一组属性中的零个或多个特性－－ReadOnly, DontEnum, DontDelete 和Internal，你可以认为它们是一个标记，一个属性可有可无的特性。为了今天讨论的目的，我们只关心DontDelete 特性。
 
-当声明的变量和函数成为一个可变对象的属性时－－要么是激活对象（Function code），要么是全局对象（Global code），这些创建的属性带有DontDelete 特性。但是，任何明确的（或隐含的）创建的属性不具有DontDelete 特性。这就是我们为什么一些属性能删除，一些不能。
+>>当声明的变量和函数成为一个可变对象的属性时－－要么是激活对象*（Function code）*，要么是全局对象*（Global code）*，这些创建的属性带有DontDelete 特性。但是，任何明确的（或隐含的）创建的属性不具有DontDelete 特性。这就是我们为什么一些属性能删除，一些不能。
 
-代码 
- 1 var GLOBAL_OBJECT = this; 
- 2   /*  `foo` is a property of a Global object. 
- 3       It is created via variable declaration and so has DontDelete attribute. 
- 4       This is why it can not be deleted. */
- 5   var foo = 1; 
- 6   delete foo; // false 
- 7   typeof foo; // "number" 
- 8   /*  `bar` is a property of a Global object. 
- 9       It is created via function declaration and so has DontDelete attribute. 
-10       This is why it can not be deleted either. */
-11   function bar(){} 
-12   delete bar; // false 
-13   typeof bar; // "function" 
-14   /*  `baz` is also a property of a Global object. 
-15       However, it is created via property assignment and so has no DontDelete attribute. 
-16       This is why it can be deleted. */
-17   GLOBAL_OBJECT.baz = 'blah'; 
-18   delete GLOBAL_OBJECT.baz; // true 
-19   typeof GLOBAL_OBJECT.baz; // "undefined"
-内置对象和DontDelete
+>>`var GLOBAL_OBJECT = this; 
+  /*  'foo' is a property of a Global object. 
+      It is created via variable declaration and so has DontDelete attribute. 
+      This is why it can not be deleted. */
+  var foo = 1; 
+  delete foo; // false 
+  typeof foo; // "number" 
+  /*  'bar' is a property of a Global object. 
+      It is created via function declaration and so has DontDelete attribute. 
+      This is why it can not be deleted either. */
+  function bar(){} 
+  delete bar; // false 
+  typeof bar; // "function" 
+  /*  'baz' is also a property of a Global object. 
+      However, it is created via property assignment and so has no DontDelete attribute. 
+      This is why it can be deleted. */
+  GLOBAL_OBJECT.baz = 'blah'; 
+  delete GLOBAL_OBJECT.baz; // true 
+  typeof GLOBAL_OBJECT.baz; // "undefine` 
+  
+>####**内置对象和DontDelete**
 
 这就是全部：属性中一个独特的特性控制着这个属性是否能被删除。注意，内置对象的一些属性也有特定的DontDelete 特性，因此，它不能被删除。特定的Arguments 变量（或者，正如我们现在了解的，激活对象的属性），任何函数实例的length属性也拥有DontDelete 特性。
 
@@ -191,7 +188,7 @@ Firebug 困惑
 2 foo; // 1 
 3 delete foo; // true 
 4 typeof foo; // "undefined"confusion
-同样，在函数代码（Function code）调用也是如此：
+同样，在函数代码*（Function code）*调用也是如此：
 
 1 (function(){ 
 2   eval('var foo = 1;'); 
