@@ -3,20 +3,24 @@
        
 ###**目录**  
 *  [原理](#原理)   
-1.	[代码类型](#代码类型)    
-1.	[执行上下文](#执行上下文)
-1.	[激活对象/可变对象](#激活对象/可变对象)
-1.	[属性特性](#属性特性)
-1.	[内置对象和DontDelete](#内置对象和DontDelete)
-1.	[未声明的赋值](#未声明的赋值)
-1.	[Firebug 困惑](#Firebug&amp;困惑)
-1.	[通过eval删除变量](#通过eval删除变量)
-1.	[浏览器兼容性](#浏览器兼容性)
-1.	[Gecko DontDelete bug](#Gecko&amp;DontDelete&amp;bug)
-1.	[IE bugs](#IE&amp;bugs)
+
+    1.	[代码类型](#代码类型)    
+    1.	[执行上下文](#执行上下文)
+    1.	[激活对象/可变对象](#激活对象/可变对象)
+    1.	[属性特性](#属性特性)
+    1.	[内置对象和DontDelete](#内置对象和dontdelete)
+    1.	[未声明的赋值](#未声明的赋值)
+    1.	[Firebug 困惑](#Firebug&amp;困惑)
+    1.	[通过eval删除变量](#通过eval删除变量)
+    1.	[浏览器兼容性](#浏览器兼容性)
+    1.	[Gecko DontDelete bug](#Gecko&amp;DontDelete&amp;bug)
+    1.	[IE bugs](#IE&amp;bugs)
+
 *  [误区](#误区)
-1.	['delete’和宿主对象](#'delete’和宿主对象)
-1.	[ES5严格模式](#ES5严格模式)
+
+    1.	['delete’和宿主对象](#'delete’和宿主对象)
+    1.	[ES5严格模式](#ES5严格模式)
+
 *  [总结](#总结)
 
 ###**原理**
