@@ -133,130 +133,118 @@ GLOBAL_OBJECT.foo; // 1
   
 >####**内置对象和DontDelete**
 
-这就是全部：属性中一个独特的特性控制着这个属性是否能被删除。注意，内置对象的一些属性也有特定的DontDelete 特性，因此，它不能被删除。特定的Arguments 变量（或者，正如我们现在了解的，激活对象的属性），任何函数实例的length属性也拥有DontDelete 特性。
+>>这就是全部：属性中一个独特的特性控制着这个属性是否能被删除。注意，内置对象的一些属性也有特定的DontDelete 特性，因此，它不能被删除。特定的Arguments 变量（或者，正如我们现在了解的，激活对象的属性），任何函数实例的length属性也拥有DontDelete 特性。
 
-代码 
-1 function(){ 
-2   /* can't delete `arguments`, since it has DontDelete */
-3   delete arguments; // false 
-4   typeof arguments; // "object" 
-5   /* can't delete function's `length`; it also has DontDelete */
-6   function f(){} 
-7   delete f.length; // false 
-8   typeof f.length; // "number" 
-9 })();
+>>`function(){ 
+  /* can't delete 'arguments', since it has DontDelete */
+  delete arguments; // false 
+  typeof arguments; // "object" 
+  /* can't delete function's 'length'; it also has DontDelete */
+  function f(){} 
+  delete f.length; // false 
+  typeof f.length; // "number" 
+})();`
 与函数参数相对应的创建的属性也有DontDelete 特性，因此也不能被删除。
+>>`(function(foo, bar){ 
+    delete foo; // false 
+    foo; // 1 
+    delete bar; // false 
+    bar; // 'blah' 
+  })(1, 'blah');`
+  
+>####**未声明的赋值**
 
-1 (function(foo, bar){ 
-2   
-3     delete foo; // false 
-4     foo; // 1 
-5   
-6     delete bar; // false 
-7     bar; // 'blah' 
-8   
-9   })(1, 'blah');
-未声明的赋值
+>>您可能还记得，未声明的赋值在一个全局对象上创建一个属性。除非它在全局对象之前的作用域中的某个地方可见。现在我们知道属性分配与变量声明之间的差异，后者设置了DontDelete 特性，而前者没有－－应该很清楚未声明的赋值创建了一个可删除的属性。
 
-您可能还记得，未声明的赋值在一个全局对象上创建一个属性。除非它在全局对象之前的作用域中的某个地方可见。现在我们知道属性分配与变量声明之间的差异，后者设置了DontDelete 特性，而前者没有－－应该很清楚未声明的赋值创建了一个可删除的属性。
-
-代码 
-1 var GLOBAL_OBJECT = this; 
-2 /* create global property via variable declaration; property has <STRONG>DontDelete</STRONG> */
-3 var foo = 1; 
-4 /* create global property via undeclared assignment; property has no <STRONG>DontDelete</STRONG> */
-5 bar = 2; 
-6 delete foo; // false 
-7 typeof foo; // "number" 
-8 delete bar; // true 
-9 typeof bar; // "undefined"
+>>`var GLOBAL_OBJECT = this; 
+/* create global property via variable declaration; property has `<STRONG>DontDelete</STRONG>` */
+var foo = 1; 
+/* create global property via undeclared assignment; property has no `<STRONG>DontDelete</STRONG>` */
+bar = 2; 
+delete foo; // false 
+typeof foo; // "number" 
+delete bar; // true 
+typeof bar; // "undefined"`
 请注意，该特性是在属性创建的过程中确定的（例如：none）。后来的赋值不会修改现有属性已经存在的特性，理解这一点很重要。
 
-代码 
- 1 /* `foo` is created as a property with DontDelete */
- 2 function foo(){} 
- 3 /* Later assignments do not modify attributes. DontDelete is still there! */
- 4 foo = 1; 
- 5 delete foo; // false 
- 6 typeof foo; // "number" 
- 7 /* But assigning to a property that doesn't exist, 
- 8    creates that property with empty attributes (and so without DontDelete) */
- 9 this.bar = 1; 
-10 delete bar; // true 
-11 typeof bar; // "undefined"
-Firebug 困惑
+>> `/* 'foo' is created as a property with DontDelete */
+ function foo(){} 
+ /* Later assignments do not modify attributes. DontDelete is still there! */
+ foo = 1; 
+ delete foo; // false 
+ typeof foo; // "number" 
+ /* But assigning to a property that doesn't exist, 
+    creates that property with empty attributes (and so without DontDelete) */
+ this.bar = 1; 
+delete bar; // true 
+typeof bar; // "undefined"`
 
-那么，在Firebug中会发生什么呢？为什么在控制台中定义的变量可以被删除，难道与我们刚才了解到相反？很好，我先前说过，当涉及到的变量声明，Eval 代码（Eval code）有一个特殊的行为。在Eval 代码（Eval code）中声明的变量实际上没有创建DontDelete 特性。
+>>####**Firebug 困惑**
 
-1 eval('var foo = 1;'); 
-2 foo; // 1 
-3 delete foo; // true 
-4 typeof foo; // "undefined"confusion
+>>那么，在Firebug中会发生什么呢？为什么在控制台中定义的变量可以被删除，难道与我们刚才了解到相反？很好，我先前说过，当涉及到的变量声明，Eval 代码（Eval code）有一个特殊的行为。在Eval 代码（Eval code）中声明的变量实际上没有创建DontDelete 特性。
+
+>>`eval('var foo = 1;'); 
+foo; // 1 
+delete foo; // true 
+typeof foo; // "undefined"confusion`
 同样，在函数代码*（Function code）*调用也是如此：
 
-1 (function(){ 
-2   eval('var foo = 1;'); 
-3   foo; // 1 
-4   delete foo; // true 
-5   typeof foo; // "undefined" 
-6 })();
+>>	`(function(){ 
+		eval('var foo = 1;'); 
+	   foo; // 1 
+	   delete foo; // true 
+	   typeof foo; // "undefined" 
+ })();`
 这是Firebug的异常行为的要点，在控制台的所有文本似乎是作为Eval 代码（Eval code）来解析和执行的，而不是作为一个全局对象或函数对象，显然，任何声明的变量没有DontDelete特性，因此可以很容易地删除，应该意识到正常全局代码和Firebug控制台之间的分歧。
 
-通过eval删除变量
+>####**通过eval删除变量**
 
-这个有趣的eval属性，连同ECMAScript 其它方面的技巧可以让我们删除不可删除的属性。在同一个执行上下文中，函数声明能覆盖同一名字的变量。
+>>这个有趣的eval属性，连同ECMAScript 其它方面的技巧可以让我们删除不可删除的属性。在同一个执行上下文中，函数声明能覆盖同一名字的变量。
 
-1 function x(){ } 
-2 var x; 
-3 typeof x; // "function"
-注意函数如何获得优先权并覆盖同名变量（或者换句话说，可变对象相同的属性）。这是因为函数声明在变量声明之后实例化，并且可以覆盖它们。函数声明不仅取代了先前的属性值，而且也取代了属性特性。如果我们通过eval声明函数，该函数也应该替换自身的属性特性。既然在eval内声明的变量没有DontDelete特性，那么实例化这个新函数应该从本质上消除属性中现有的DontDelete特性，是的这个属性可以删除（当然也就改变引用新创建函数的值）。
+>>` function x(){ } 
+ var x; 
+ typeof x; // "function"`
+注意函数如何获得优先权并覆盖同名变量（或者换句话说，可变对象相同的属性）。这是因为**函数声明在变量声明之后实例化，并且可以覆盖它们**。函数声明不仅取代了先前的属性值，而且也取代了属性特性。如果我们通过eval声明函数，该函数也应该替换自身的属性特性。既然在eval内声明的变量没有DontDelete特性，那么实例化这个新函数应该从本质上消除属性中现有的DontDelete特性，是的这个属性可以删除（当然也就改变引用新创建函数的值）。
 
-代码
-
-1 var x = 1; 
-2   /* Can't delete, `x` has DontDelete */
-3   delete x; // false 
-4   typeof x; // "number" 
-5   eval('function x(){}'); 
-6   /* `x` property now references function, and should have no DontDelete */
-7   typeof x; // "function" 
-8   delete x; // should be `true` 
-9   typeof x; // should be "undefined"
+>>`var x = 1; 
+  /* Can't delete, `x` has DontDelete */
+  delete x; // false 
+  typeof x; // "number" 
+  eval('function x(){}'); 
+  /* `x` property now references function, and should have no DontDelete */
+  typeof x; // "function" 
+  delete x; // should be `true` 
+  typeof x; // should be "undefined"`
 遗憾的是，这类欺骗在我尝试中并不总是运行，我可能丢失了一些东西，或者这种行为过于简单不足以引起注意。
 
-浏览器兼容性
+>####**浏览器兼容性**
 
-从理论上认识事物的工作原理是有用的，但实际影响是至关重要的。当涉及到variable/property creation/deletion时，浏览器遵循标准吗？在大多数是的。
+>>从理论上认识事物的工作原理是有用的，但实际影响是至关重要的。当涉及到variable/property creation/deletion时，浏览器遵循标准吗？在大多数是的。
 
-我写了一个简单的测试包检测Global code、Function code 和Eval code代码delete 运算符的兼容性。测试包同时检查 －－ delete运算符的返回值，以及应被删除的属性是否被删除的。delete 运算符返回true或false并不重要，重要的是有DontDelete特性不被删除，反之亦然。
+>>我写了一个简单的测试包检测Global code、Function code 和Eval code代码delete 运算符的兼容性。测试包同时检查 －－ delete运算符的返回值，以及应被删除的属性是否被删除的。delete 运算符返回true或false并不重要，重要的是有DontDelete特性不被删除，反之亦然。
 
-现代浏览器一般都相当兼容，除了这个我早期提到的这个eval特性。下面的浏览器完全通过测试包：Opera 7.54+、Firefox 1.0+、Safari 3.1.2+、Chrome 4+。
+>>现代浏览器一般都相当兼容，除了这个我早期提到的这个eval特性。下面的浏览器完全通过测试包：Opera 7.54+、Firefox 1.0+、Safari 3.1.2+、Chrome 4+。
 
-Safari 2.x 和3.0.4在删除函数参数时有些问题，这些属性似乎没有创建DontDelete，所以可以删除它们。Safari 2.x 甚至有更多问题，删除非引用（例如delete 1）抛出错误；函数声明创建了可删除属性（但奇怪是变量声明不是），在eval中的变量声明成为不可删除的（但函数声明不是）。
+>>Safari 2.x 和3.0.4在删除函数参数时有些问题，这些属性似乎没有创建DontDelete，所以可以删除它们。Safari 2.x 甚至有更多问题，删除非引用（例如delete 1）抛出错误；函数声明创建了可删除属性（但奇怪是变量声明不是），在eval中的变量声明成为不可删除的（但函数声明不是）。
 
-与Safari相似，Konqueror (3.5，但不是 4.3)当删除非引用（例如delete 1）抛出错误，它错误使函数参数可以删除。
+>>与Safari相似，Konqueror (3.5，但不是 4.3)当删除非引用（例如delete 1）抛出错误，它错误使函数参数可以删除。
 
-Gecko DontDelete bug
+>###**Gecko DontDelete bug**
 
-Gecko 1.8.x浏览器－－Firefox 2.x、 Camino 1.x、Seamonkey 1.x等显示一个有趣的bug：对一个属性明确地赋值可以删除它的DontDelete特性，即使该属性是通过变量或函数声明来创建的。
+>>Gecko 1.8.x浏览器－－Firefox 2.x、 Camino 1.x、Seamonkey 1.x等显示一个有趣的bug：对一个属性明确地赋值可以删除它的DontDelete特性，即使该属性是通过变量或函数声明来创建的。
 
-代码 
- 1 function foo(){} 
- 2     delete foo; // false (as expected) 
- 3     typeof foo; // "function" (as expected) 
- 4   
- 5     /* now assign to a property explicitly */
- 6   
- 7     this.foo = 1; // erroneously clears DontDelete attribute 
- 8     delete foo; // true 
- 9     typeof foo; // "undefined" 
-10   
-11     /* note that this doesn't happen when assigning property implicitly */
-12   
-13     function bar(){} 
-14     bar = 1; 
-15     delete bar; // false 
-16     typeof bar; // "number" (although assignment replaced property)
+>` function foo(){} 
+     delete foo; // false (as expected) 
+     typeof foo; // "function" (as expected) 
+        /* now assign to a property explicitly */
+        this.foo = 1; // erroneously clears DontDelete attribute 
+     delete foo; // true 
+     typeof foo; // "undefined" 
+        /* note that this doesn't happen when assigning property implicitly */
+        function bar(){} 
+     bar = 1; 
+     delete bar; // false 
+     typeof bar; // "number" (although assignment replaced property)`
 出乎意料的是，IE5.5 – 8全部通过测试包，删除非引用（例如delete 1）抛出错误（就像在老版的Safari一样）。但事实上有更严重bug存在IE中，这不会立即显现。这些bug都与全局对象相关。
 
 ======================================================================
