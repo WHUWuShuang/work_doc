@@ -23,11 +23,11 @@ spawn出的gen进程会执行到Mod模块的init函数。然后会把{ok, Pid}�
 
 可以调用start/4或者start_link/4给启动的gen进程命名,函数name_register实际调用register函数.
 
-`init_it(GenMod, Starter, Parent, Name, Mod, Args, Options) ->
-    case name_register(Name) of
-    true ->
-        init_it2(GenMod, Starter, Parent, Name, Mod, Args, Options);
-   ....`
+`init_it(GenMod, Starter, Parent, Name, Mod, Args, Options) ->  
+	    case name_register(Name) of  
+	    true ->  
+	        init_it2(GenMod, Starter, Parent, Name, Mod, Args, Options);
+	   ....`
 ###**CAST**
 
 
