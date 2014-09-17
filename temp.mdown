@@ -1,14 +1,19 @@
 #npc的要求
 [toc]
+- [ ] a task list item
+- [ ] list syntax required
+- [ ] normal **formatting**, @mentions, #1234 refs
+- [ ] incomplete
+- [x] completed
 ###npc基础属性
 #####要求：
-1.	可以切换
-	- [X]	planA:
+
+	- [X]planA:
 
 	直接把属性字段挂在character上
 	优点：方便更改
 	缺点：增加属性时从开始一直到建立角色为止，都需要做相应更改
-	- [X]	planB:
+	- [X]planB:
 
 	和现在的dialog插件一样，每个模块自己维护自己的基础属性，以sid为关联进行查找
 	优点：各属性相互独立，加入新属性时不用担心影响已有的代码
