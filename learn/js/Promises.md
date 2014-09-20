@@ -279,5 +279,6 @@ jQuery还实现了done()和fail()方法，其实都是then方法的shortcut。
 -   [when.js](https://github.com/cujojs/when)
 -   [Asynch JS: The Power Of $.Deferred](http://www.html5rocks.com/en/tutorials/async/deferred/)
 -   [jQuery: $.Deferred()](https://github.com/jquery/jquery/blob/master/src/deferred.js)
+
 原文出自：[Alloyteam](http://www.alloyteam.com/2014/05/javascript-promise-mode/)
 （责编/夏梦竹）
