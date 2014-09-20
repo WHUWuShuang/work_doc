@@ -3,6 +3,7 @@
 >摘要：目前高级浏览器如Chrome、Firefox都已经内置了Promise对象，提供更多的操作接口，如此优雅的Promise具备哪些特性呢？作者TAT.dmyang就JavaScript中的Promise规范给出了一些见解，一起来看下。  
 
 【编者按】JavaScript是一种基于对象和事件驱动并具有相对安全性的客户端脚本语言。自推出后就大受开发者的青睐，基于[JavaScript的开发工具](http://code.csdn.net/news/2819224)也不计其数，开发者们可以灵活选择，轻松构建应用。原文作者TAT.dmyang就JavaScript中的Promise规范给出了一些见解，目前高级浏览器如Chrome、Firefox都已经内置了Promise对象，提供更多的操作接口，如此优雅的Promise具备哪些特性呢？且看下文：
+
 ----------
 
 一直以来，JavaScript处理异步都是以callback的方式，在前端开发领域callback机制几乎深入人心。在设计API的时候，不管是浏览器厂商还是SDK开发商亦或是各种类库的作者，基本上都已经遵循着callback的套路。
