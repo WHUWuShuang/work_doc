@@ -6,10 +6,10 @@
 
 在集群的每个节点内（当然也可以通过 rpc）
 
--   拷贝 beam 到线上的 ebin 目录。
--   code:purge(Module).
--   code:load_file(Module).
--   让代码触发 Fully qualified function calls，走到新的 beam 代码。
+1.   拷贝 beam 到线上的 ebin 目录。
+1.   code:purge(Module).
+1.   code:load_file(Module).
+1.   让代码触发 Fully qualified function calls，走到新的 beam 代码。
 
 如果你想省略后 2，3 两步，可以利用 mochiweb 的 reloader 模块进行自动加载，其原理也是发现 beam 文件时间戳的变化调用 2，3 两步。
 
@@ -45,14 +45,14 @@ erlang:check_process 就是用来判断进程是否有在调用老代码的函�
 
 code:load_file 最后调度的是 erlang:load_module, 该函数做了两步事情：
 
--   把当前代码覆盖老代码。
--   载入新的 beam 文件，把其代码作为当前代码。
+1.   把当前代码覆盖老代码。
+1.   载入新的 beam 文件，把其代码作为当前代码。
 
 结合例子更好说明问题：
 
--   应用开始 vsn=1 这就是当前代码，老代码不存在。
--   升级后 vsn=2 这就是当前代码，老代码为 vsn=1。
--   再升级，分三步：
+1.   应用开始 vsn=1 这就是当前代码，老代码不存在。
+1.   升级后 vsn=2 这就是当前代码，老代码为 vsn=1。
+1.   再升级，分三步：
     -   purege 先把还在调用 vsn=1 代码的进程杀掉。
     -   load module 把当前代码 vsn=2 视为成老代码。
     -   把新的 beam vsn=3 当做当前代码。
