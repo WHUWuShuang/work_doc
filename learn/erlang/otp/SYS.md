@@ -7,7 +7,7 @@ __代码热升级__
 
 __演示代码__
 
-这里有![演示代码](https://github.com/hoterran/erlang-hotswap-example)，你可以自行运行。
+这里有[演示代码](https://github.com/hoterran/erlang-hotswap-example)，你可以自行运行。
 
 ####热升级的原理和步骤
 
