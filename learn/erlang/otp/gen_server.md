@@ -42,7 +42,7 @@ gen进程从loop函数处接受到Request消息，模式匹配后一路执行到
 
 
 调用进程向gen进程发送call消息，和cast不同，调用进程会阻塞在wait_resp_mon函数里等待gen进程的回馈。收到消息后，gen进程会执行Mod:handle_call函数，并把执行的结果Reply直接发送给调用进程，然后自己再次进入循环等待新的消息。
-
+```erlang
 	wait_resp_mon(Node, Mref, Timeout) ->
 		receive
 		    {Mref, Reply} ->
@@ -60,19 +60,20 @@ gen进程从loop函数处接受到Request消息，模式匹配后一路执行到
 	        end,
 	        exit(timeout)
 	    end.
+```	    
 默认情况下handle_call的返回是{reply,….}. 而调用进程阻塞在wait_resp_mon的默认超时时间是5s(-define(default_timeout, 5000)).
 
 在spec里看到handle_call的返回值可以是{noreply,…},  或者gen进程在处理其它事情而达到超时时间, 则调用进程会异常退出, 你也可以在调用gen_server:call/3来设置一个call命令的超时时间.
 
 对于call和cast的命令既可以使用Name也可以使用Pid,  gen内部会进行Name到Pid的转化。
-
+```erlang
 	call(Name, Label, Request, Timeout)
 		when is_atom(Name), Timeout =:= infinity;
 			is_atom(Name), is_integer(Timeout), Timeout >= 0 ->
 		case whereis(Name) of
 			Pid when is_pid(Pid) ->
 				do_call(Pid, Label, Request, Timeout);
- 
+ ```
 
 ###**INFO**
 ![](http://www.hoterran.info/wp-content/uploads/2012/05/gen_server-info1.png)
