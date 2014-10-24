@@ -8,29 +8,29 @@ gen_fsm和gen_server非常的类似, 在gen进程递归调用loop函数的过程
 如果在Mod:init返回的是{ok, State, Timeout}
 ```erlang
 {ok, State, Timeout} ->
-proc_lib:init_ack(Starter, {ok, self()}),
-loop(Parent, Name, State, Mod, Timeout, Debug);
+	proc_lib:init_ack(Starter, {ok, self()}),
+	loop(Parent, Name, State, Mod, Timeout, Debug);
 ```
 则在loop函数的阻塞是有超时的，不会永久阻塞等待消息。
 ```erlang
 loop(Parent, Name, StateName, StateData, Mod, Time, Debug) ->
-Msg = receive
-Input ->
-Input
-after Time ->
-{'$gen_event', timeout}
-end,
-decode_msg(Msg,Parent, Name, StateName, StateData, Mod, Time, Debug, false).
+	Msg = receive
+		Input ->
+			Input
+		after Time ->
+			{'$gen_event', timeout}
+		end,
+	decode_msg(Msg,Parent, Name, StateName, StateData, Mod, Time, Debug, false).
 ```
 即便超时时间内gen进程未收到任何消息, 依然会触发StateName函数的执行, 其中Event为timeout.
 ```erlang
 dispatch({'$gen_event', Event}, Mod, StateName, StateData) ->
-Mod:StateName(Event, StateData);
+	Mod:StateName(Event, StateData);
 ```
 对于gen_server也一样可以设置为接收到消息的超时, 而他触发的函数是hanle_info, 其中Info也为timeout.
 ```erlang
 dispatch(Info, Mod, State) ->
-Mod:handle_info(Info, State).
+	Mod:handle_info(Info, State).
 ```
 ####SEND_EVENT
 ![](http://www.hoterran.info/wp-content/uploads/2012/05/gen_fsm_v2-send_event.png)
