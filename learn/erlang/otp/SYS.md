@@ -12,45 +12,50 @@ __演示代码__
 ####热升级的原理和步骤
 
 1.  首先 gen 进程启动并处于正常工作状态处理业务逻辑，现在需要对代码进行升级，修改原来的内部State状态。
-2.  修改代码，编译出新的beam文件。
-```elrang
-compile:file(Mod).
-```
-注意不能使用 c(Mod)。 c命令实际包含一个编译、加载、清理老代码作用，这里还不能加载哦, 否则老的内存状态运行在新的代码肯定报错，因为 State 不一致。  
-3.  利用 sys:suspend 函数使得 gen 进程陷入一种挂起状态  
+ 
+1.  修改代码，编译出新的beam文件。  
+    ```elrang
+    compile:file(Mod).
+    ```  
+注意不能使用 c(Mod)。 c命令实际包含一个编译、加载、清理老代码作用，这里还不能加载哦, 否则老的内存状态运行在新的代码肯定报错，因为 State 不一致。
+
+1.  利用 sys:suspend 函数使得 gen 进程陷入一种挂起状态  
 这种挂起状态的 gen 进程仅仅会处理 system 和 ‘EXIT’ 两类的消息，而不会处理业务逻辑。
-```erlang
-sys.erl
-====
-suspend_loop(SysState, Parent, Mod, Debug, Misc, Hib) ->
-    case Hib of
-    true ->
-       suspend_loop_hib(SysState, Parent, Mod, Debug, Misc, Hib);
-    _ ->
-        receive
-        {system, From, Msg} ->
-            handle_system_msg(SysState, Msg, From, Parent, Mod, Debug, Misc, Hib);
-        {'EXIT', Parent, Reason} ->
-            Mod:system_terminate(Reason, Parent, Debug, Misc)
-        end
-    end.
-```    
-此时业务消息因为不能模式匹配到，都被临时的存在 mailbox 中。  
-4.  因为业务不会运行了，我们可以放心的清理老代码，载入新代码,
-```erlang
-code:purge(Mod).
-code:load_file(Mod).
-```
+    ```erlang
+    sys.erl
+    ====
+    suspend_loop(SysState, Parent, Mod, Debug, Misc, Hib) ->
+        case Hib of
+        true ->
+           suspend_loop_hib(SysState, Parent, Mod, Debug, Misc, Hib);
+        _ ->
+            receive
+            {system, From, Msg} ->
+                handle_system_msg(SysState, Msg, From, Parent, Mod, Debug, Misc, Hib);
+            {'EXIT', Parent, Reason} ->
+                Mod:system_terminate(Reason, Parent, Debug, Misc)
+            end
+        end.
+    ```    
+此时业务消息因为不能模式匹配到，都被临时的存在 mailbox 中。
+
+1.  因为业务不会运行了，我们可以放心的清理老代码，载入新代码,
+    ```erlang
+    code:purge(Mod).
+    code:load_file(Mod).
+    ```  
 好了这个时候已经新的代码了，而 gen 进程里的内存状态还是老状态。
-5.  调用 change_code 做一个内存状态的转化
-```erlang
-sys:change_code(Name, Mod, OldVsn, Extra).
-```
-change_code 属于 system 消息，告诉 gen 进程去调用 Mod 里的 code_change 函数，针对的 vsn是 OldVsn，额外的参数是Extra，调用 code_change 函数之后，gen 进程内存的 State 在此时进行了转化。 
-6. 回到业务逻辑
-```erlang
-sys:resume(Mod).
-```
+
+1.  调用 change_code 做一个内存状态的转化
+    ```erlang
+    sys:change_code(Name, Mod, OldVsn, Extra).
+    ```  
+change_code 属于 system 消息，告诉 gen 进程去调用 Mod 里的 code_change 函数，针对的 vsn是 OldVsn，额外的参数是Extra，调用 code_change 函数之后，gen 进程内存的 State 在此时进行了转化。
+
+1. 回到业务逻辑
+    ```erlang
+    sys:resume(Mod).
+    ```  
 好了代码，内存里的信息都是正确的了，我们就开启业务。
 
 resume 函数最终会让 gen 进程跑到 system_continue 这个函数
