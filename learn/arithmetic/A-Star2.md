@@ -27,10 +27,12 @@ else
 
 原始A\*寻路路径
 
-![](http://dl.iteye.com/upload/attachment/0072/1372/705c4cdb-43d9-3ace-9f1d-6f2f44e14062.jpg)
+![](./img/a-star/1.jpg)
 
  去掉共线点
 
+
+![](./img/a-star/1.jpg)
 ![](http://dl.iteye.com/upload/attachment/0072/1374/abc3c2e2-e549-309e-af3a-1dbd893c1520.jpg)
 
  去掉多余拐点

@@ -64,7 +64,7 @@ system_continue(Parent, Debug, [Name, StateName, StateData, Mod, Time]) ->
     loop(Parent, Name, StateName, StateData, Mod, Time, Debug).
 ```    
 于是gen进程又走回到正常的业务逻辑loop函数去，于是积累的消息和新的消息就开始正常的处理了.
-![](http://www.hoterran.info/wp-content/uploads/2012/07/gen_server-code_change-430x1024.png)
+![](./img/gen_server-code_change.png)
 
 release_handler_1.erl 底层也是调用 sys 模块进行代码热升级的，所以理解 sys 的工作原理很重要。
 
