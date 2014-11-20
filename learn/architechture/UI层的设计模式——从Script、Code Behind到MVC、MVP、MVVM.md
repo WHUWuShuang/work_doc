@@ -191,6 +191,7 @@ MVC顺着需求把UI相关的工作分化成了三份，这点经过实践证明
 ![](./img/UI_design/3.gif)
 
 （图一）
+
 ![](./img/UI_design/4.png)
 
 （图二）
